@@ -75,6 +75,9 @@ function App(props) {
 	const prevProps = usePrevious(props);
 
 	const theme = useSelector(state => ((state || {}).reducer || {}).colorTheme);
+	const projectList = useSelector(state => ((state || {}).reducer || {}).projectList || []);
+
+	log('App', { props, theme, projectList });
 
 	const [themeField, setThemeField] = useState(null);
 
@@ -87,8 +90,6 @@ function App(props) {
 		}
 	});
 
-	var a = buildArray(50);
-
 	return buildTable(
 		{},
 		buildRow(
@@ -96,7 +97,7 @@ function App(props) {
 			buildCell(
 				'title',
 				<h1>Counter Manager</h1>,
-				{ colspan: 3 }
+				{ colSpan: 3 }
 			)
 		),
 		buildRow(
@@ -104,7 +105,7 @@ function App(props) {
 			buildCell(
 				'header',
 				<h2>Projects</h2>,
-				{ colspan: 2 }
+				{ colSpan: 2 }
 			),
 			buildCell(
 				'create',
@@ -115,11 +116,11 @@ function App(props) {
 				/>
 			)
 		),
-		a.map((b, i) => buildRow(
+		projectList.map((project, i) => buildRow(
 			`project_${i}`,
 			buildCell(
 				'project',
-				'Project'
+				project.name
 			),
 			buildCell(
 				'manage',
@@ -150,7 +151,7 @@ function App(props) {
 				><option>Light</option><option>Dark</option></select><p
 					className='by'
 				>by Guilherme Alan Ritter</p></div >,
-				{ colspan: 3 }
+				{ colSpan: 3 }
 			)
 		)
 	);
