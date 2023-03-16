@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as colorTheme from '../constant/colorTheme';
 
-import { buildArray } from '../util/data';
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 
-import { addProject, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { addProject, deleteProject, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -133,7 +132,7 @@ function App(props) {
 			buildCell(
 				'delete',
 				<input
-					onClick={() => alert('TO DO')}
+					onClick={() => dispatch(deleteProject(project.name))}
 					type='button'
 					value='Delete'
 				/>

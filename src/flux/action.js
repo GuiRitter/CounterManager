@@ -19,6 +19,16 @@ export const addProject = () => dispatch => {
 	});
 };
 
+export const deleteProject = name => dispatch => {
+	if (!window.confirm(`Delete project ${name}?`)) {
+		return doesNothing;
+	}
+	dispatch({
+		type: type.DELETE_PROJECT,
+		name
+	});
+};
+
 export const restoreFromLocalStorage = () => ({
 	type: type.RESTORE_FROM_LOCAL_STORAGE
 });
