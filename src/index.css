@@ -19,10 +19,10 @@ body {
 }
 
 /* use viewport-relative units to cover page fully */
-body {
+/* body {
 	height: 100vh;
 	width: 100vw;
-}
+} */
 
 /* include border and padding in element width and height */
 * {

@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import * as colorTheme from '../constant/colorTheme';
 
+import { buildArray } from '../util/data';
 import { getLog } from '../util/log';
+import { buildCell, buildRow, buildTable } from '../util/html';
 
 import { restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
@@ -20,8 +22,6 @@ function setFieldFromState(themeField, theme) {
 function componentDidMount(props, dispatch, themeField, theme) {
 
 	log('componentDidMount', { props, theme });
-
-	document.body.classList.add('container');
 
 	dispatch(restoreFromLocalStorage());
 
@@ -87,10 +87,73 @@ function App(props) {
 		}
 	});
 
-	return <><h1>Counter Manager</h1><div className='main'>Hello, World!</div><div className='footer'><select
-		onChange={() => dispatch(toggleTheme())}
-		ref={ref => { if (ref) { setThemeField(ref); } }}
-	><option>Light</option><option>Dark</option></select></div></>;
+	var a = buildArray(50);
+
+	return buildTable(
+		{},
+		buildRow(
+			'title',
+			buildCell(
+				'title',
+				<h1>Counter Manager</h1>,
+				{ colspan: 3 }
+			)
+		),
+		buildRow(
+			'header',
+			buildCell(
+				'header',
+				<h2>Projects</h2>,
+				{ colspan: 2 }
+			),
+			buildCell(
+				'create',
+				<input
+					onClick={() => alert('TO DO')}
+					type='button'
+					value='Create'
+				/>
+			)
+		),
+		a.map((b, i) => buildRow(
+			`project_${i}`,
+			buildCell(
+				'project',
+				'Project'
+			),
+			buildCell(
+				'manage',
+				<input
+					onClick={() => alert('TO DO')}
+					type='button'
+					value='Manage'
+				/>
+			),
+			buildCell(
+				'delete',
+				<input
+					onClick={() => alert('TO DO')}
+					type='button'
+					value='Delete'
+				/>
+			)
+		)),
+		buildRow(
+			'footer',
+			buildCell(
+				'theme',
+				<div
+					className='footer'
+				><select
+					onChange={() => dispatch(toggleTheme())}
+					ref={ref => { if (ref) { setThemeField(ref); } }}
+				><option>Light</option><option>Dark</option></select><p
+					className='by'
+				>by Guilherme Alan Ritter</p></div >,
+				{ colspan: 3 }
+			)
+		)
+	);
 }
 
 export default App;

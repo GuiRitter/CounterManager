@@ -1,6 +1,6 @@
 import * as type from './type';
 
-import { getLog } from '../util/log';
+// import { getLog } from '../util/log';
 
 // const log = getLog('flux.action.index.');
 
