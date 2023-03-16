@@ -5,6 +5,7 @@ import { LOCAL_STORAGE_NAME } from '../constant/system';
 
 import { getLog } from '../util/log';
 import { updateLocalStorage } from '../util/persistence';
+import { byName, getProjectByName } from '../util/project';
 
 const log = getLog('flux.reducer.');
 
@@ -55,6 +56,17 @@ const reducer = (currentState = initialState, action) => {
 	log('reducer', { currentState, action });
 
 	switch (action.type) {
+
+		case type.ADD_PROJECT:
+
+			if (currentState.projectList.find(getProjectByName(action.name))) {
+				return currentState;
+			}
+
+			return updateLocalStorage({
+				...currentState,
+				projectList: currentState.projectList.concat({ name: action.name }).sort(byName)
+			});
 
 		case type.RESTORE_FROM_LOCAL_STORAGE:
 			return JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) || initialState;

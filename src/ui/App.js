@@ -7,7 +7,7 @@ import { buildArray } from '../util/data';
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 
-import { restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { addProject, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -110,7 +110,7 @@ function App(props) {
 			buildCell(
 				'create',
 				<input
-					onClick={() => alert('TO DO')}
+					onClick={() => dispatch(addProject())}
 					type='button'
 					value='Create'
 				/>
