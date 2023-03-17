@@ -12,44 +12,8 @@ const log = getLog('flux.reducer.');
 const initialState =
 {
 	colorTheme: theme.LIGHT,
-	projectList: [
-		{ name: 'alpha' },
-		{ name: 'bravo' },
-		{ name: 'charlie' },
-		{ name: 'delta' },
-		{ name: 'echo' },
-		{ name: 'foxtrot' },
-		{ name: 'golf' },
-		{ name: 'hotel' },
-		{ name: 'india' },
-		{ name: 'juliett' },
-		{ name: 'kilo' },
-		{ name: 'lima' },
-		{ name: 'mike' },
-		{ name: 'november' },
-		{ name: 'oscar' },
-		{ name: 'papa' },
-		{ name: 'quebec' },
-		{ name: 'romeo' },
-		{ name: 'sierra' },
-		{ name: 'tango' },
-		{ name: 'uniform' },
-		{ name: 'victor' },
-		{ name: 'whiskey' },
-		{ name: 'x-ay' },
-		{ name: 'yankee' },
-		{ name: 'zulu' },
-		{ name: 'one' },
-		{ name: 'two' },
-		{ name: 'three' },
-		{ name: 'four' },
-		{ name: 'five' },
-		{ name: 'six' },
-		{ name: 'seven' },
-		{ name: 'eight' },
-		{ name: 'nine' },
-		{ name: 'zero' }
-	]
+	projectList: [],
+	projectCurrent: null
 };
 
 const reducer = (currentState = initialState, action) => {
@@ -73,6 +37,20 @@ const reducer = (currentState = initialState, action) => {
 			return {
 				...currentState,
 				projectList: currentState.projectList.filter(byNotThisName(action.name))
+			};
+
+		case type.MANAGE_COUNTER:
+
+			return {
+				...currentState,
+				projectCurrent: action.name
+			};
+
+		case type.MANAGE_PROJECT:
+
+			return {
+				...currentState,
+				projectCurrent: null
 			};
 
 		case type.RESTORE_FROM_LOCAL_STORAGE:

@@ -6,7 +6,7 @@ import * as colorTheme from '../constant/colorTheme';
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 
-import { addProject, deleteProject, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { addProject, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -75,6 +75,7 @@ function App(props) {
 
 	const theme = useSelector(state => ((state || {}).reducer || {}).colorTheme);
 	const projectList = useSelector(state => ((state || {}).reducer || {}).projectList || []);
+	const projectCurrent = useSelector(state => ((state || {}).reducer || {}).projectCurrent || null);
 
 	log('App', { props, theme, projectList });
 
@@ -89,6 +90,84 @@ function App(props) {
 		}
 	});
 
+	const colSpan = projectCurrent ? 6 : 3;
+
+	let list = [];
+
+	if (projectCurrent) {
+		list = [
+			buildRow(
+				'header',
+				buildCell(
+					'title',
+					<h2>Project {projectCurrent}</h2>,
+					{ colSpan: colSpan - 2 }
+				),
+				buildCell(
+					'create',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Create'
+					/>
+				),
+				buildCell(
+					'back',
+					<input
+						onClick={() => dispatch(manageCounters())}
+						type='button'
+						value='Back'
+					/>
+				)
+			)
+		];
+	} else {
+		list = [
+			buildRow(
+				'header',
+				buildCell(
+					'header',
+					<h2>Projects</h2>,
+					{ colSpan: colSpan - 1 }
+				),
+				buildCell(
+					'create',
+					<input
+						onClick={() => dispatch(addProject())}
+						type='button'
+						value='Create'
+					/>
+				)
+			)
+		];
+
+		list = list.concat(
+			projectList.map((project, i) => buildRow(
+				`project_${i}`,
+				buildCell(
+					'project',
+					project.name
+				),
+				buildCell(
+					'manage',
+					<input
+						onClick={() => dispatch(manageCounters(project.name))}
+						type='button'
+						value='Manage'
+					/>
+				),
+				buildCell(
+					'delete',
+					<input
+						onClick={() => dispatch(deleteProject(project.name))}
+						type='button'
+						value='Delete'
+					/>
+				)
+			))
+		);
+	}
+
 	return buildTable(
 		{},
 		buildRow(
@@ -96,48 +175,10 @@ function App(props) {
 			buildCell(
 				'title',
 				<h1>Counter Manager</h1>,
-				{ colSpan: 3 }
+				{ colSpan }
 			)
 		),
-		buildRow(
-			'header',
-			buildCell(
-				'header',
-				<h2>Projects</h2>,
-				{ colSpan: 2 }
-			),
-			buildCell(
-				'create',
-				<input
-					onClick={() => dispatch(addProject())}
-					type='button'
-					value='Create'
-				/>
-			)
-		),
-		projectList.map((project, i) => buildRow(
-			`project_${i}`,
-			buildCell(
-				'project',
-				project.name
-			),
-			buildCell(
-				'manage',
-				<input
-					onClick={() => alert('TO DO')}
-					type='button'
-					value='Manage'
-				/>
-			),
-			buildCell(
-				'delete',
-				<input
-					onClick={() => dispatch(deleteProject(project.name))}
-					type='button'
-					value='Delete'
-				/>
-			)
-		)),
+		list,
 		buildRow(
 			'footer',
 			buildCell(
@@ -150,7 +191,7 @@ function App(props) {
 				><option>Light</option><option>Dark</option></select><p
 					className='by'
 				>by Guilherme Alan Ritter</p></div >,
-				{ colSpan: 3 }
+				{ colSpan }
 			)
 		)
 	);

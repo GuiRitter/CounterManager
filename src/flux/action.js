@@ -29,6 +29,15 @@ export const deleteProject = name => dispatch => {
 	});
 };
 
+export const manageCounters = name => ({
+	type: type.MANAGE_COUNTER,
+	name
+});
+
+export const manageProjects = () => ({
+	type: type.MANAGE_PROJECT
+});
+
 export const restoreFromLocalStorage = () => ({
 	type: type.RESTORE_FROM_LOCAL_STORAGE
 });

@@ -1,6 +1,6 @@
 {
   "name": "counter_manager",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "homepage": "counter_manager/",
   "dependencies": {
