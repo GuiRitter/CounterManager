@@ -65,6 +65,15 @@ export const manageProjects = () => ({
 	type: type.MANAGE_PROJECT
 });
 
+export const resetCounter = () => dispatch => {
+	if (!window.confirm('Are you sure you want to reset all enabled counters?')) {
+		return;
+	}
+	dispatch({
+		type: type.RESET_COUNTER
+	});
+};
+
 export const restoreFromLocalStorage = () => ({
 	type: type.RESTORE_FROM_LOCAL_STORAGE
 });

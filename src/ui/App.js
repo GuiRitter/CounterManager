@@ -8,7 +8,7 @@ import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 import { getProjectByName } from '../util/project';
 
-import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme, updateCounter } from '../flux/action';
+import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, resetCounter, restoreFromLocalStorage, toggleTheme, updateCounter } from '../flux/action';
 
 import './App.css';
 
@@ -109,7 +109,7 @@ function App(props) {
 				buildCell(
 					'reset',
 					<input
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(resetCounter())}
 						type='button'
 						value='Reset'
 					/>

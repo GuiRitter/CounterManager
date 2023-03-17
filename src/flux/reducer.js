@@ -127,6 +127,28 @@ const reducer = (currentState = initialState, action) => {
 				projectCurrent: null
 			});
 
+		case type.RESET_COUNTER:
+
+			if (!currentState.projectCurrent) {
+				return currentState;
+			}
+
+			project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
+
+			if (!project) {
+				return currentState;
+			}
+
+			return updateLocalStorage({
+				...currentState,
+				projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.map(mCounter => mCounter.isEnabled ? Object.assign({}, mCounter, {
+						count: 0
+					}) : mCounter).sort(byIsEnabledAndName)
+				}) : mProject)
+			});
+
+
 		case type.RESTORE_FROM_LOCAL_STORAGE:
 			return JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) || initialState;
 
