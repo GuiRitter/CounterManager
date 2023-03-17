@@ -2,6 +2,8 @@ export const CREATE_COUNTER = 'CREATE_COUNTER';
 
 export const CREATE_PROJECT = 'CREATE_PROJECT';
 
+export const DELETE_COUNTER = 'DELETE_COUNTER';
+
 export const DELETE_PROJECT = 'DELETE_PROJECT';
 
 export const MANAGE_COUNTER = 'MANAGE_COUNTER';

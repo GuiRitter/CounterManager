@@ -7,7 +7,7 @@ import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 import { getProjectByName } from '../util/project';
 
-import { createCounter, createProject, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { createCounter, createProject, deleteCounter, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -163,7 +163,7 @@ function App(props) {
 				buildCell(
 					'delete',
 					<input
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(deleteCounter(projectCurrent, counter.name))}
 						type='button'
 						value='Delete'
 					/>

@@ -31,6 +31,17 @@ export const createProject = () => dispatch => {
 	});
 };
 
+export const deleteCounter = (projectName, counterName) => dispatch => {
+	if (!window.confirm(`Delete counter ${counterName}?`)) {
+		return doesNothing;
+	}
+	dispatch({
+		type: type.DELETE_COUNTER,
+		projectName,
+		counterName
+	});
+};
+
 export const deleteProject = name => dispatch => {
 	if (!window.confirm(`Delete project ${name}?`)) {
 		return doesNothing;

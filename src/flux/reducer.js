@@ -20,11 +20,13 @@ const initialState =
 const reducer = (currentState = initialState, action) => {
 	log('reducer', { currentState, action });
 
+	let project = null;
+
 	switch (action.type) {
 
 		case type.CREATE_COUNTER:
 
-			const project = currentState.projectList.find(getProjectByName(action.projectName));
+			project = currentState.projectList.find(getProjectByName(action.projectName));
 
 			if (!project) {
 				return currentState;
@@ -36,9 +38,9 @@ const reducer = (currentState = initialState, action) => {
 
 			return updateLocalStorage({
 				...currentState,
-				projectList: currentState.projectList.map(project => getProjectByName(action.projectName)(project) ? Object.assign({}, project, {
-					counterList: project.counterList.concat({ name: action.counterName, count: 0, isEnabled: true }).sort(byIsEnabledAndName)
-				}) : project)
+				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.concat({ name: action.counterName, count: 0, isEnabled: true }).sort(byIsEnabledAndName)
+				}) : mProject)
 			});
 
 		case type.CREATE_PROJECT:
@@ -50,6 +52,21 @@ const reducer = (currentState = initialState, action) => {
 			return updateLocalStorage({
 				...currentState,
 				projectList: currentState.projectList.concat({ name: action.name, counterList: [] }).sort(byName)
+			});
+
+		case type.DELETE_COUNTER:
+
+			project = currentState.projectList.find(getProjectByName(action.projectName));
+
+			if (!project) {
+				return currentState;
+			}
+
+			return updateLocalStorage({
+				...currentState,
+				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.filter(byNotThisCounterName(action.counterName))
+				}) : mProject)
 			});
 
 		case type.DELETE_PROJECT:
