@@ -21,6 +21,7 @@ const reducer = (currentState = initialState, action) => {
 	log('reducer', { currentState, action });
 
 	let project = null;
+	let counter = null;
 
 	switch (action.type) {
 
@@ -74,6 +75,29 @@ const reducer = (currentState = initialState, action) => {
 			return updateLocalStorage({
 				...currentState,
 				projectList: currentState.projectList.filter(byNotThisProjectName(action.name))
+			});
+
+		case type.ENABLE_COUNTER:
+
+			project = currentState.projectList.find(getProjectByName(action.projectName));
+
+			if (!project) {
+				return currentState;
+			}
+
+			counter = project.counterList.find(getCounterByName(action.counterName));
+
+			if (!counter) {
+				return currentState;
+			}
+
+			return updateLocalStorage({
+				...currentState,
+				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.map(mCounter => getCounterByName(action.counterName)(mCounter) ? Object.assign({}, mCounter, {
+						isEnabled: action.isEnabled
+					}) : mCounter).sort(byIsEnabledAndName)
+				}) : mProject)
 			});
 
 		case type.MANAGE_COUNTER:

@@ -52,6 +52,13 @@ export const deleteProject = name => dispatch => {
 	});
 };
 
+export const enableCounter = (projectName, counterName, isEnabled) => ({
+	type: type.ENABLE_COUNTER,
+	projectName,
+	counterName,
+	isEnabled
+});
+
 export const manageCounters = name => ({
 	type: type.MANAGE_COUNTER,
 	name

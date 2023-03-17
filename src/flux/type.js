@@ -6,6 +6,8 @@ export const DELETE_COUNTER = 'DELETE_COUNTER';
 
 export const DELETE_PROJECT = 'DELETE_PROJECT';
 
+export const ENABLE_COUNTER = 'ENABLE_COUNTER';
+
 export const MANAGE_COUNTER = 'MANAGE_COUNTER';
 
 export const MANAGE_PROJECT = 'MANAGE_PROJECT';

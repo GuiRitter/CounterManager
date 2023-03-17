@@ -7,7 +7,7 @@ import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 import { getProjectByName } from '../util/project';
 
-import { createCounter, createProject, deleteCounter, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -130,6 +130,7 @@ function App(props) {
 				buildCell(
 					'increment',
 					<input
+						className={counter.isEnabled ? '' : 'hidden'}
 						onClick={() => alert('TO DO')}
 						type='button'
 						value='Increment'
@@ -147,17 +148,18 @@ function App(props) {
 				buildCell(
 					'decrement',
 					<input
+						className={counter.isEnabled ? '' : 'hidden'}
 						onClick={() => alert('TO DO')}
 						type='button'
 						value='Decrement'
 					/>
 				),
 				buildCell(
-					'disable',
+					counter.isEnabled ? 'disable' : 'enable',
 					<input
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(enableCounter(projectCurrent, counter.name, !counter.isEnabled))}
 						type='button'
-						value='Disable'
+						value={counter.isEnabled ? 'Disable' : 'Enable'}
 					/>
 				),
 				buildCell(
