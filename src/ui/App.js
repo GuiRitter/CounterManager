@@ -114,7 +114,7 @@ function App(props) {
 				buildCell(
 					'back',
 					<input
-						onClick={() => dispatch(manageCounters())}
+						onClick={() => dispatch(manageProjects())}
 						type='button'
 						value='Back'
 					/>
