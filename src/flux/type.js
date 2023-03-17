@@ -1,4 +1,6 @@
-export const ADD_PROJECT = 'ADD_PROJECT';
+export const CREATE_COUNTER = 'CREATE_COUNTER';
+
+export const CREATE_PROJECT = 'CREATE_PROJECT';
 
 export const DELETE_PROJECT = 'DELETE_PROJECT';
 

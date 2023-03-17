@@ -5,8 +5,9 @@ import * as colorTheme from '../constant/colorTheme';
 
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
+import { getProjectByName } from '../util/project';
 
-import { addProject, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { createCounter, createProject, deleteProject, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
 
 import './App.css';
 
@@ -76,8 +77,9 @@ function App(props) {
 	const theme = useSelector(state => ((state || {}).reducer || {}).colorTheme);
 	const projectList = useSelector(state => ((state || {}).reducer || {}).projectList || []);
 	const projectCurrent = useSelector(state => ((state || {}).reducer || {}).projectCurrent || null);
+	const counterList = useSelector(state => ((((state || {}).reducer || {}).projectList || []).find(getProjectByName(projectCurrent)) || { counterList: [] }).counterList || []);
 
-	log('App', { props, theme, projectList });
+	log('App', { props, theme, projectList, projectCurrent, counterList });
 
 	const [themeField, setThemeField] = useState(null);
 
@@ -106,7 +108,7 @@ function App(props) {
 				buildCell(
 					'create',
 					<input
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(createCounter(projectCurrent))}
 						type='button'
 						value='Create'
 					/>
@@ -121,6 +123,53 @@ function App(props) {
 				)
 			)
 		];
+
+		list = list.concat(
+			counterList.map((counter, i) => buildRow(
+				`counter_${i}`,
+				buildCell(
+					'increment',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Increment'
+					/>
+				),
+				buildCell(
+					'name',
+					counter.name
+				),
+				buildCell(
+					'count',
+					counter.count,
+					{ className: 'count' }
+				),
+				buildCell(
+					'decrement',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Decrement'
+					/>
+				),
+				buildCell(
+					'disable',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Disable'
+					/>
+				),
+				buildCell(
+					'delete',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Delete'
+					/>
+				)
+			))
+		)
 	} else {
 		list = [
 			buildRow(
@@ -133,7 +182,7 @@ function App(props) {
 				buildCell(
 					'create',
 					<input
-						onClick={() => dispatch(addProject())}
+						onClick={() => dispatch(createProject())}
 						type='button'
 						value='Create'
 					/>
@@ -187,7 +236,7 @@ function App(props) {
 					className='footer'
 				><select
 					onChange={() => dispatch(toggleTheme())}
-					ref={ref => { if (ref) { setThemeField(ref); } }}
+					ref={ref => { if (ref && (ref !== themeField)) { setThemeField(ref); } }}
 				><option>Light</option><option>Dark</option></select><p
 					className='by'
 				>by Guilherme Alan Ritter</p></div >,

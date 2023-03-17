@@ -26,3 +26,8 @@ input {
 .by	 {
 	display: inline-block;
 }
+
+.count {
+	padding-left: 1em;
+	padding-right: 1em;
+}

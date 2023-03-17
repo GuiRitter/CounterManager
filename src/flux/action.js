@@ -8,13 +8,25 @@ const doesNothing = ({
 	type: type.NO_OP
 });
 
-export const addProject = () => dispatch => {
-	let name = prompt('Enter a name for the new project:').trim();
+export const createCounter = projectName => dispatch => {
+	let counterName = (prompt('Enter a name for the new counter:') || '').trim();
+	if (!counterName) {
+		return doesNothing;
+	}
+	dispatch({
+		type: type.CREATE_COUNTER,
+		projectName,
+		counterName
+	});
+};
+
+export const createProject = () => dispatch => {
+	let name = (prompt('Enter a name for the new project:') || '').trim();
 	if (!name) {
 		return doesNothing;
 	}
 	dispatch({
-		type: type.ADD_PROJECT,
+		type: type.CREATE_PROJECT,
 		name
 	});
 };
