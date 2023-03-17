@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as colorTheme from '../constant/colorTheme';
+import * as operation from '../constant/operation';
 
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 import { getProjectByName } from '../util/project';
 
-import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme } from '../flux/action';
+import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, restoreFromLocalStorage, toggleTheme, updateCounter } from '../flux/action';
 
 import './App.css';
 
@@ -139,7 +140,7 @@ function App(props) {
 					'increment',
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(updateCounter(counter.name, operation.INCREMENT))}
 						type='button'
 						value='Increment'
 					/>
@@ -157,7 +158,7 @@ function App(props) {
 					'decrement',
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
-						onClick={() => alert('TO DO')}
+						onClick={() => dispatch(updateCounter(counter.name, operation.DECREMENT))}
 						type='button'
 						value='Decrement'
 					/>

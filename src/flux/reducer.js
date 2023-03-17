@@ -1,6 +1,7 @@
 import * as type from './type';
 
 import * as theme from '../constant/colorTheme';
+import * as operation from '../constant/operation';
 import { LOCAL_STORAGE_NAME } from '../constant/system';
 
 import { byIsEnabledAndName, byNotThisName as byNotThisCounterName, getCounterByName } from '../util/counter';
@@ -133,6 +134,33 @@ const reducer = (currentState = initialState, action) => {
 			return updateLocalStorage({
 				...currentState,
 				colorTheme: (currentState.colorTheme === theme.DARK) ? theme.LIGHT : theme.DARK
+			});
+
+		case type.UPDATE_COUNTER:
+
+			if (!currentState.projectCurrent) {
+				return currentState;
+			}
+
+			project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
+
+			if (!project) {
+				return currentState;
+			}
+
+			counter = project.counterList.find(getCounterByName(action.name));
+
+			if (!counter) {
+				return currentState;
+			}
+
+			return updateLocalStorage({
+				...currentState,
+				projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.map(mCounter => getCounterByName(action.name)(mCounter) ? Object.assign({}, mCounter, {
+						count: (action.operation === operation.INCREMENT) ? (mCounter.count + 1) : (mCounter.count - 1)
+					}) : mCounter).sort(byIsEnabledAndName)
+				}) : mProject)
 			});
 
 		default: return currentState;

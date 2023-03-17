@@ -17,3 +17,5 @@ export const NO_OP = 'NO_OP';
 export const RESTORE_FROM_LOCAL_STORAGE = 'RESTORE_FROM_LOCAL_STORAGE';
 
 export const TOGGLE_THEME = 'TOGGLE_THEME';
+
+export const UPDATE_COUNTER = 'UPDATE_COUNTER';

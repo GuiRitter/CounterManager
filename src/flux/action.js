@@ -72,3 +72,9 @@ export const restoreFromLocalStorage = () => ({
 export const toggleTheme = () => ({
 	type: type.TOGGLE_THEME
 });
+
+export const updateCounter = (name, operation) => ({
+	type: type.UPDATE_COUNTER,
+	name,
+	operation
+});
