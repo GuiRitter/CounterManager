@@ -140,7 +140,8 @@ function App(props) {
 					'increment',
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
-						onClick={() => dispatch(updateCounter(counter.name, operation.INCREMENT))}
+						id={`increment_${i}_button`}
+						onClick={() => dispatch(updateCounter(counter.name, operation.INCREMENT, `increment_${i}_button`))}
 						type='button'
 						value='Increment'
 					/>
@@ -158,7 +159,8 @@ function App(props) {
 					'decrement',
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
-						onClick={() => dispatch(updateCounter(counter.name, operation.DECREMENT))}
+						id={`decrement_${i}_button`}
+						onClick={() => dispatch(updateCounter(counter.name, operation.DECREMENT, `decrement_${i}_button`))}
 						type='button'
 						value='Decrement'
 					/>

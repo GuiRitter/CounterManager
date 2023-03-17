@@ -1,3 +1,4 @@
+import { bindActionCreators } from 'redux';
 import * as type from './type';
 
 // import { getLog } from '../util/log';
@@ -82,8 +83,15 @@ export const toggleTheme = () => ({
 	type: type.TOGGLE_THEME
 });
 
-export const updateCounter = (name, operation) => ({
-	type: type.UPDATE_COUNTER,
-	name,
-	operation
-});
+export const updateCounter = (name, operation, id) => dispatch => {
+	const button = document.getElementById(id);
+	button.classList.add('hidden');
+	setTimeout(() => {
+		button.classList.remove('hidden');
+	}, 1000);
+	dispatch({
+		type: type.UPDATE_COUNTER,
+		name,
+		operation
+	});
+};
