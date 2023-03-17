@@ -103,12 +103,20 @@ function App(props) {
 				buildCell(
 					'title',
 					<h2>Project {projectCurrent}</h2>,
-					{ colSpan: colSpan - 2 }
+					{ colSpan: colSpan - 3 }
+				),
+				buildCell(
+					'reset',
+					<input
+						onClick={() => alert('TO DO')}
+						type='button'
+						value='Reset'
+					/>
 				),
 				buildCell(
 					'create',
 					<input
-						onClick={() => dispatch(createCounter(projectCurrent))}
+						onClick={() => dispatch(createCounter())}
 						type='button'
 						value='Create'
 					/>
@@ -157,7 +165,7 @@ function App(props) {
 				buildCell(
 					counter.isEnabled ? 'disable' : 'enable',
 					<input
-						onClick={() => dispatch(enableCounter(projectCurrent, counter.name, !counter.isEnabled))}
+						onClick={() => dispatch(enableCounter(counter.name, !counter.isEnabled))}
 						type='button'
 						value={counter.isEnabled ? 'Disable' : 'Enable'}
 					/>
@@ -165,7 +173,7 @@ function App(props) {
 				buildCell(
 					'delete',
 					<input
-						onClick={() => dispatch(deleteCounter(projectCurrent, counter.name))}
+						onClick={() => dispatch(deleteCounter(counter.name))}
 						type='button'
 						value='Delete'
 					/>

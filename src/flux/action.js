@@ -8,15 +8,14 @@ const doesNothing = ({
 	type: type.NO_OP
 });
 
-export const createCounter = projectName => dispatch => {
-	let counterName = (prompt('Enter a name for the new counter:') || '').trim();
-	if (!counterName) {
+export const createCounter = () => dispatch => {
+	let name = (prompt('Enter a name for the new counter:') || '').trim();
+	if (!name) {
 		return doesNothing;
 	}
 	dispatch({
 		type: type.CREATE_COUNTER,
-		projectName,
-		counterName
+		name
 	});
 };
 
@@ -31,14 +30,13 @@ export const createProject = () => dispatch => {
 	});
 };
 
-export const deleteCounter = (projectName, counterName) => dispatch => {
-	if (!window.confirm(`Delete counter ${counterName}?`)) {
+export const deleteCounter = name => dispatch => {
+	if (!window.confirm(`Delete counter ${name}?`)) {
 		return doesNothing;
 	}
 	dispatch({
 		type: type.DELETE_COUNTER,
-		projectName,
-		counterName
+		name
 	});
 };
 
@@ -52,10 +50,9 @@ export const deleteProject = name => dispatch => {
 	});
 };
 
-export const enableCounter = (projectName, counterName, isEnabled) => ({
+export const enableCounter = (name, isEnabled) => ({
 	type: type.ENABLE_COUNTER,
-	projectName,
-	counterName,
+	name,
 	isEnabled
 });
 

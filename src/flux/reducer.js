@@ -27,20 +27,24 @@ const reducer = (currentState = initialState, action) => {
 
 		case type.CREATE_COUNTER:
 
-			project = currentState.projectList.find(getProjectByName(action.projectName));
+			if (!currentState.projectCurrent) {
+				return currentState;
+			}
+
+			project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
 
 			if (!project) {
 				return currentState;
 			}
 
-			if (project.counterList.find(getCounterByName(action.counterName))) {
+			if (project.counterList.find(getCounterByName(action.name))) {
 				return currentState;
 			}
 
 			return updateLocalStorage({
 				...currentState,
-				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
-					counterList: mProject.counterList.concat({ name: action.counterName, count: 0, isEnabled: true }).sort(byIsEnabledAndName)
+				projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.concat({ name: action.name, count: 0, isEnabled: true }).sort(byIsEnabledAndName)
 				}) : mProject)
 			});
 
@@ -57,7 +61,11 @@ const reducer = (currentState = initialState, action) => {
 
 		case type.DELETE_COUNTER:
 
-			project = currentState.projectList.find(getProjectByName(action.projectName));
+			if (!currentState.projectCurrent) {
+				return currentState;
+			}
+
+			project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
 
 			if (!project) {
 				return currentState;
@@ -65,8 +73,8 @@ const reducer = (currentState = initialState, action) => {
 
 			return updateLocalStorage({
 				...currentState,
-				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
-					counterList: mProject.counterList.filter(byNotThisCounterName(action.counterName))
+				projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.filter(byNotThisCounterName(action.name))
 				}) : mProject)
 			});
 
@@ -79,13 +87,17 @@ const reducer = (currentState = initialState, action) => {
 
 		case type.ENABLE_COUNTER:
 
-			project = currentState.projectList.find(getProjectByName(action.projectName));
+			if (!currentState.projectCurrent) {
+				return currentState;
+			}
+
+			project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
 
 			if (!project) {
 				return currentState;
 			}
 
-			counter = project.counterList.find(getCounterByName(action.counterName));
+			counter = project.counterList.find(getCounterByName(action.name));
 
 			if (!counter) {
 				return currentState;
@@ -93,8 +105,8 @@ const reducer = (currentState = initialState, action) => {
 
 			return updateLocalStorage({
 				...currentState,
-				projectList: currentState.projectList.map(mProject => getProjectByName(action.projectName)(mProject) ? Object.assign({}, mProject, {
-					counterList: mProject.counterList.map(mCounter => getCounterByName(action.counterName)(mCounter) ? Object.assign({}, mCounter, {
+				projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+					counterList: mProject.counterList.map(mCounter => getCounterByName(action.name)(mCounter) ? Object.assign({}, mCounter, {
 						isEnabled: action.isEnabled
 					}) : mCounter).sort(byIsEnabledAndName)
 				}) : mProject)
