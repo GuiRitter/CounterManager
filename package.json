@@ -1,6 +1,6 @@
 {
   "name": "counter_manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "homepage": "counter_manager/",
   "dependencies": {
@@ -17,6 +17,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "i": "npx update-browserslist-db@latest && npm i",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
