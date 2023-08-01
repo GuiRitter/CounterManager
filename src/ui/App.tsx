@@ -1,59 +1,70 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import * as colorTheme from '../constant/colorTheme';
-import * as operation from '../constant/operation';
+import { ColorTheme } from '../enum/colorTheme';
+import { Operation } from '../enum/operation';
+
+import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, resetCounter, restoreFromLocalStorage, toggleTheme, updateCounter } from '../flux/action';
+
+import { useAppDispatch, useAppSelector } from '../hook';
+
+import { AppDispatch } from '../store';
 
 import { getLog } from '../util/log';
 import { buildCell, buildRow, buildTable } from '../util/html';
 import { getProjectByName } from '../util/project';
 
-import { createCounter, createProject, deleteCounter, deleteProject, enableCounter, manageCounters, manageProjects, resetCounter, restoreFromLocalStorage, toggleTheme, updateCounter } from '../flux/action';
-
 import './App.css';
 
 const log = getLog('App.');
 
-function setFieldFromState(themeField, theme) {
+function setFieldFromState(themeField: HTMLSelectElement, theme: ColorTheme) {
 	if (themeField && (themeField.value !== theme)) {
 		themeField.value = theme;
 	}
 }
 
-function componentDidMount(props, dispatch, themeField, theme) {
+function componentDidMount(dispatch: AppDispatch, themeField: HTMLSelectElement, theme: ColorTheme) {
 
-	log('componentDidMount', { props, theme });
+	log('componentDidMount', { theme });
 
 	dispatch(restoreFromLocalStorage());
 
 	setFieldFromState(themeField, theme);
 }
 
-function componentDidUpdate(props, prevProps, dispatch, themeField, theme) {
+function componentDidUpdate(themeField: HTMLSelectElement, theme: ColorTheme) {
 
-	log('componentDidUpdate', { props, prevProps, theme });
+	log('componentDidUpdate', { theme });
 
 	setFieldFromState(themeField, theme);
 
+	const root = document.querySelector(':root');
+
+	if (!root) {
+		return;
+	}
+
+	const htmlElement = root as HTMLHtmlElement;
+
 	switch (theme) {
 
-		case colorTheme.DARK:
+		case ColorTheme.DARK:
 
-			document.querySelector(':root').style.setProperty('--page-background-color', '#000000');
-			document.querySelector(':root').style.setProperty('--page-text-color', '#959595');
-			document.querySelector(':root').style.setProperty('--input-background-color', '#101010');
-			document.querySelector(':root').style.setProperty('--input-border-color', '#898989');
-			document.querySelector(':root').style.setProperty('--input-text-color', '#ffffff');
+			htmlElement.style.setProperty('--page-background-color', '#000000');
+			htmlElement.style.setProperty('--page-text-color', '#959595');
+			htmlElement.style.setProperty('--input-background-color', '#101010');
+			htmlElement.style.setProperty('--input-border-color', '#898989');
+			htmlElement.style.setProperty('--input-text-color', '#ffffff');
 
 			break;
 
-		case colorTheme.LIGHT:
+		case ColorTheme.LIGHT:
 
-			document.querySelector(':root').style.setProperty('--page-background-color', 'initial');
-			document.querySelector(':root').style.setProperty('--page-text-color', 'initial');
-			document.querySelector(':root').style.setProperty('--input-background-color', 'initial');
-			document.querySelector(':root').style.setProperty('--input-border-color', 'initial');
-			document.querySelector(':root').style.setProperty('--input-text-color', 'initial');
+			htmlElement.style.setProperty('--page-background-color', 'initial');
+			htmlElement.style.setProperty('--page-text-color', 'initial');
+			htmlElement.style.setProperty('--input-background-color', 'initial');
+			htmlElement.style.setProperty('--input-border-color', 'initial');
+			htmlElement.style.setProperty('--input-text-color', 'initial');
 
 			break;
 
@@ -61,35 +72,26 @@ function componentDidUpdate(props, prevProps, dispatch, themeField, theme) {
 	}
 }
 
-function usePrevious(value) {
-	const ref = useRef();
-	useEffect(() => {
-		ref.current = value;
-	});
-	return ref.current;
-}
-
-function App(props) {
+function App() {
 
 	const didMountRef = useRef(false);
-	const dispatch = useDispatch();
-	const prevProps = usePrevious(props);
+	const dispatch = useAppDispatch();
 
-	const theme = useSelector(state => ((state || {}).reducer || {}).colorTheme);
-	const projectList = useSelector(state => ((state || {}).reducer || {}).projectList || []);
-	const projectCurrent = useSelector(state => ((state || {}).reducer || {}).projectCurrent || null);
-	const counterList = useSelector(state => ((((state || {}).reducer || {}).projectList || []).find(getProjectByName(projectCurrent)) || { counterList: [] }).counterList || []);
+	const theme = useAppSelector(state => ((state || {}).reducer || {}).colorTheme);
+	const projectList = useAppSelector(state => ((state || {}).reducer || {}).projectList || []);
+	const projectCurrent = useAppSelector(state => ((state || {}).reducer || {}).projectCurrent || null);
+	const counterList = useAppSelector(state => ((((state || {}).reducer || {}).projectList || []).find(getProjectByName(projectCurrent)) || { counterList: [] }).counterList || []);
 
-	log('App', { props, theme, projectList, projectCurrent, counterList });
+	log('App', { theme, projectList, projectCurrent, counterList });
 
-	const [themeField, setThemeField] = useState(null);
+	const [themeField, setThemeField] = useState(null as unknown as HTMLSelectElement);
 
 	useEffect(() => {
 		if (didMountRef.current) {
-			componentDidUpdate(props, prevProps, dispatch, themeField, theme);
+			componentDidUpdate(themeField, theme);
 		} else {
 			didMountRef.current = true;
-			componentDidMount(props, dispatch, themeField, theme);
+			componentDidMount(dispatch, themeField, theme);
 		}
 	});
 
@@ -141,7 +143,7 @@ function App(props) {
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
 						id={`increment_${i}_button`}
-						onClick={() => dispatch(updateCounter(counter.name, operation.INCREMENT, `increment_${i}_button`))}
+						onClick={() => dispatch(updateCounter(counter.name, Operation.INCREMENT, `increment_${i}_button`))}
 						type='button'
 						value='Increment'
 					/>
@@ -160,7 +162,7 @@ function App(props) {
 					<input
 						className={counter.isEnabled ? '' : 'hidden'}
 						id={`decrement_${i}_button`}
-						onClick={() => dispatch(updateCounter(counter.name, operation.DECREMENT, `decrement_${i}_button`))}
+						onClick={() => dispatch(updateCounter(counter.name, Operation.DECREMENT, `decrement_${i}_button`))}
 						type='button'
 						value='Decrement'
 					/>
