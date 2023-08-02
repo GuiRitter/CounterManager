@@ -1,7 +1,8 @@
 {
   "name": "counter_manager",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
+  "homepage": "counter_manager/",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.3",
     "@testing-library/jest-dom": "^5.17.0",
