@@ -1,6 +1,8 @@
 import { Counter } from "../model/counter";
 
-export const byIsEnabledAndName = (counterA: Counter, counterB: Counter) => {
+export const byIsEnabled = (counter: Counter) => counter.isEnabled;
+
+export const byIsEnabledAndNameAsc = (counterA: Counter, counterB: Counter) => {
 	if (counterA.isEnabled && (!counterB.isEnabled)) {
 		return -1;
 	}

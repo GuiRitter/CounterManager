@@ -35,3 +35,7 @@ input {
 .hidden {
 	visibility: hidden;
 }
+
+.full_cell_button {
+	width: 100%;
+}

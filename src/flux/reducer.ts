@@ -3,7 +3,10 @@ import { LOCAL_STORAGE_NAME } from '../constant/system';
 import { ColorTheme } from '../enum/colorTheme';
 import { Operation } from '../enum/operation';
 
-import { byIsEnabledAndName, byNotThisName as byNotThisCounterName, getCounterByName } from '../util/counter';
+import { Counter } from '../model/counter';
+
+import { byIsEnabled, byIsEnabledAndNameAsc, byNotThisName as byNotThisCounterName, getCounterByName } from '../util/counter';
+import { byNotFirst as byNotFirstCounterLog, byDateTimeDesc as byCounterLogDateTimeDesc, getListAppendedAndSorted } from '../util/counterLog';
 import { getLog } from '../util/log';
 import { updateLocalStorage } from '../util/persistence';
 import { byName, byNotThisName as byNotThisProjectName, getProjectByName } from '../util/project';
@@ -38,9 +41,19 @@ const createCounter = (currentState: State, action: NameAction) => {
 
 	return updateLocalStorage({
 		...currentState,
-		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
-			counterList: mProject.counterList.concat({ name: action.name, count: 0, isEnabled: true }).sort(byIsEnabledAndName)
-		}) : mProject)
+		projectList: currentState.projectList.map(mProject => {
+
+			const counterNew: Counter = {
+				name: action.name,
+				count: 0,
+				isEnabled: true
+			};
+
+			return getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+				counterList: mProject.counterList.concat(counterNew).sort(byIsEnabledAndNameAsc),
+				logList: getListAppendedAndSorted(mProject.logList, counterNew, Operation.CREATE)
+			}) : mProject
+		})
 	});
 };
 
@@ -52,7 +65,11 @@ const createProject = (currentState: State, action: NameAction) => {
 
 	return updateLocalStorage({
 		...currentState,
-		projectList: currentState.projectList.concat({ name: action.name, counterList: [] }).sort(byName)
+		projectList: currentState.projectList.concat({
+			name: action.name,
+			counterList: [],
+			logList: []
+		}).sort(byName)
 	});
 };
 
@@ -68,10 +85,17 @@ const deleteCounter = (currentState: State, action: NameAction) => {
 		return currentState;
 	}
 
+	const counter = project.counterList.find(getCounterByName(action.name));
+
+	if (!counter) {
+		return currentState;
+	}
+
 	return updateLocalStorage({
 		...currentState,
 		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
-			counterList: mProject.counterList.filter(byNotThisCounterName(action.name))
+			counterList: mProject.counterList.filter(byNotThisCounterName(action.name)),
+			logList: getListAppendedAndSorted(mProject.logList, counter, Operation.DELETE)
 		}) : mProject)
 	});
 };
@@ -104,7 +128,8 @@ const enableCounter = (currentState: State, action: EnableAction) => {
 		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
 			counterList: mProject.counterList.map(mCounter => getCounterByName(action.name)(mCounter) ? Object.assign({}, mCounter, {
 				isEnabled: action.isEnabled
-			}) : mCounter).sort(byIsEnabledAndName)
+			}) : mCounter).sort(byIsEnabledAndNameAsc),
+			logList: getListAppendedAndSorted(mProject.logList, counter, action.isEnabled ? Operation.ENABLE : Operation.DISABLE)
 		}) : mProject)
 	});
 };
@@ -136,7 +161,11 @@ const resetCounter = (currentState: State) => {
 		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
 			counterList: mProject.counterList.map(mCounter => mCounter.isEnabled ? Object.assign({}, mCounter, {
 				count: 0
-			}) : mCounter).sort(byIsEnabledAndName)
+			}) : mCounter).sort(byIsEnabledAndNameAsc),
+			logList: mProject.counterList.filter(byIsEnabled).reduce(
+				(previousLogList, currentCounter) => getListAppendedAndSorted(previousLogList, currentCounter, Operation.RESET, false),
+				mProject.logList
+			).sort(byCounterLogDateTimeDesc)
 		}) : mProject)
 	});
 };
@@ -152,6 +181,42 @@ const toggleTheme = (currentState: State) => updateLocalStorage({
 	...currentState,
 	colorTheme: (currentState.colorTheme === ColorTheme.DARK) ? ColorTheme.LIGHT : ColorTheme.DARK
 });
+
+const undo = (currentState: State) => {
+
+	if (!currentState.projectCurrent) {
+		return currentState;
+	}
+
+	const project = currentState.projectList.find(getProjectByName(currentState.projectCurrent));
+
+	if (!project) {
+		return currentState;
+	}
+
+	if (project.logList.length < 1) {
+		return currentState
+	}
+
+	const counterLog = project.logList[0];
+	let counterList: Counter[];
+
+	if (counterLog.operation === Operation.CREATE) {
+		counterList = project.counterList.filter(byNotThisCounterName(counterLog.counter.name));
+	} else if (counterLog.operation === Operation.DELETE) {
+		counterList = project.counterList.concat(counterLog.counter);
+	} else {
+		counterList = project.counterList.map(mCounter => getCounterByName(counterLog.counter.name)(mCounter) ? counterLog.counter : mCounter);
+	}
+
+	return updateLocalStorage({
+		...currentState,
+		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
+			counterList: counterList.sort(byIsEnabledAndNameAsc),
+			logList: project.logList.filter(byNotFirstCounterLog).sort(byCounterLogDateTimeDesc)
+		}) : mProject)
+	});
+};
 
 const updateCounter = (currentState: State, action: OperationAction) => {
 
@@ -176,7 +241,8 @@ const updateCounter = (currentState: State, action: OperationAction) => {
 		projectList: currentState.projectList.map(mProject => getProjectByName(currentState.projectCurrent)(mProject) ? Object.assign({}, mProject, {
 			counterList: mProject.counterList.map(mCounter => getCounterByName(action.name)(mCounter) ? Object.assign({}, mCounter, {
 				count: (action.operation === Operation.INCREMENT) ? (mCounter.count + 1) : (mCounter.count - 1)
-			}) : mCounter).sort(byIsEnabledAndName)
+			}) : mCounter).sort(byIsEnabledAndNameAsc),
+			logList: getListAppendedAndSorted(mProject.logList, counter, action.operation)
 		}) : mProject)
 	});
 };
@@ -215,6 +281,9 @@ const reducer = (currentState = initialState, action: any) => {
 
 		case Type.TOGGLE_THEME:
 			return toggleTheme(currentState);
+
+		case Type.UNDO:
+			return undo(currentState);
 
 		case Type.UPDATE_COUNTER:
 			return updateCounter(currentState, action);

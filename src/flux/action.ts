@@ -79,6 +79,15 @@ export const toggleTheme = () => ({
 	type: Type.TOGGLE_THEME
 } as Action);
 
+export const undo = () => (dispatch: AppDispatch) => {
+	if (!window.confirm(`Confirm undo?`)) {
+		return;
+	}
+	dispatch({
+		type: Type.UNDO,
+	} as Action);
+};
+
 export const updateCounter = (name: string, operation: Operation, id: string) => (dispatch: AppDispatch) => {
 	const button = document.getElementById(id);
 	if (!button) {

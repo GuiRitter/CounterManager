@@ -1,4 +1,9 @@
 export enum Operation {
-	INCREMENT = "INCREMENT",
-	DECREMENT = "DECREMENT"
+	CREATE = 'Create',
+	DECREMENT = 'Decrement',
+	DELETE = 'Delete',
+	DISABLE = 'Disable',
+	ENABLE = 'Enable',
+	INCREMENT = 'Increment',
+	RESET = 'Reset'
 }
